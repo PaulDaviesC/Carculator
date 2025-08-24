@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
         VCostPerUnitByCar::class,
         VCostPerUnitByCarCategory::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -59,6 +59,7 @@ abstract class KdhDatabase : RoomDatabase() {
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
                         createViewsAndTriggers(db) // idempotent
+                        ensureSystemCategories(db) // make sure any new system categories are present
                     }
                 })
                 .fallbackToDestructiveMigration()
@@ -188,8 +189,13 @@ abstract class KdhDatabase : RoomDatabase() {
                 "INSERT OR IGNORE INTO app_settings (id, distanceUnit, currencyCode, createdAtEpochMs, updatedAtEpochMs, schemaVersion) VALUES (1, 'KM', 'INR', ?, ?, 1)",
                 arrayOf(now, now)
             )
+            ensureSystemCategories(db)
+        }
 
-            val categories = listOf(
+        private fun ensureSystemCategories(db: SupportSQLiteDatabase) {
+            val now = System.currentTimeMillis()
+            var order = 10
+            listOf(
                 "SYSTEM:FUEL" to "Fuel",
                 "SYSTEM:INSURANCE" to "Insurance",
                 "SYSTEM:SERVICE" to "Service",
@@ -200,9 +206,7 @@ abstract class KdhDatabase : RoomDatabase() {
                 "SYSTEM:DOWN_PAYMENT" to "Down payment",
                 "SYSTEM:EMI" to "EMI",
                 "SYSTEM:ACCESSORIES" to "Accessories"
-            )
-            var order = 10
-            categories.forEach { (id, name) ->
+            ).forEach { (id, name) ->
                 db.execSQL(
                     "INSERT OR IGNORE INTO expense_category (id, name, kind, isDeleted, sortOrder, createdAtEpochMs) VALUES (?, ?, 'SYSTEM', 0, ?, ?)",
                     arrayOf(id, name, order, now)

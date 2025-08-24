@@ -15,5 +15,9 @@ data class Car(
     val registrationNumber: String,
     val name: String?,
     val createdAtEpochMs: Long,
-    val archivedAtEpochMs: Long?
+    val archivedAtEpochMs: Long?,
+    val initialOdometerMeters: Long? = null,
+    val acquisitionCostMinor: Long? = null,
+    val acquisitionDateEpochMs: Long? = null,
+    val remainingLifeMonths: Int? = null
 )

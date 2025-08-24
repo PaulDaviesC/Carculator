@@ -71,6 +71,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.activity:activity-ktx:1.9.2")
 
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.12.2")
     testImplementation("androidx.test:core:1.6.1")

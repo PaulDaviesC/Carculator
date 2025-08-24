@@ -23,6 +23,9 @@ interface CarDao {
     @Query("SELECT * FROM car ORDER BY createdAtEpochMs DESC")
     fun observeAll(): Flow<List<Car>>
 
+    @Query("SELECT * FROM car ORDER BY createdAtEpochMs DESC")
+    suspend fun listAll(): List<Car>
+
     @Query("SELECT * FROM car WHERE id = :id")
     suspend fun getById(id: String): Car?
 

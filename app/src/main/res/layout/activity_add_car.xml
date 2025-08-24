@@ -9,13 +9,87 @@
         android:id="@+id/etRegistration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/registration_number"/>
+        android:hint="Registration number"/>
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/car_name_optional"/>
+        android:hint="Car name (optional)"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Currency:"/>
+        <TextView
+            android:id="@+id/tvCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etAcquisitionCost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Cost of acquisition"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp">
+        <TextView
+            android:id="@+id/tvAcqDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Acquisition date"
+            android:padding="8dp"/>
+        <Button
+            android:id="@+id/btnPickAcqDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick date"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+        <EditText
+            android:id="@+id/etRemainingYears"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:text="15"
+            android:hint="Remaining years"/>
+        <EditText
+            android:id="@+id/etRemainingMonths"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:text="0"
+            android:hint="Remaining months"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etInitialOdo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Initial odometer (unit)"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,13 +102,13 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel"/>
+            android:text="Cancel"/>
 
         <Button
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save"
+            android:text="Save"
             android:layout_marginStart="16dp"/>
     </LinearLayout>
 

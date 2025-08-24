@@ -26,6 +26,9 @@ interface ExpenseDao {
     @Query("SELECT * FROM expense WHERE carId = :carId AND categoryId = :categoryId ORDER BY occurredAtEpochMs DESC")
     fun observeForCarAndCategory(carId: String, categoryId: String): Flow<List<Expense>>
 
+    @Query("SELECT COUNT(*) FROM expense WHERE carId = :carId AND categoryId = 'SYSTEM:DOWN_PAYMENT' AND vendor = 'Amortization'")
+    suspend fun countAmortization(carId: String): Int
+
     // Aggregates via views (created in DB callback)
     @Query("SELECT currencyCode, totalAmountMinor FROM v_expense_totals_by_car WHERE carId = :carId")
     fun observeTotalsByCar(carId: String): Flow<List<CarTotalRow>>
