@@ -198,7 +198,8 @@ abstract class KdhDatabase : RoomDatabase() {
                 "SYSTEM:TAX" to "Tax",
                 "SYSTEM:TOLLS" to "Tolls",
                 "SYSTEM:DOWN_PAYMENT" to "Down payment",
-                "SYSTEM:EMI" to "EMI"
+                "SYSTEM:EMI" to "EMI",
+                "SYSTEM:ACCESSORIES" to "Accessories"
             )
             var order = 10
             categories.forEach { (id, name) ->
