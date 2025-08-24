@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KitnaDetiHai</string>
+    <string name="add_car">Add Car</string>
+    <string name="registration_number">Registration number</string>
+    <string name="car_name_optional">Car name (optional)</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_odometer">Add Odometer</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="km">KM</string>
+    <string name="mile">Mile</string>
+    <string name="currency">Currency</string>
+    <string name="amount">Amount</string>
+    <string name="vendor">Vendor</string>
+    <string name="notes">Notes</string>
+    <string name="category">Category</string>
+    <string name="odometer">Odometer</string>
+    <string name="cars">Cars</string>
+</resources>
