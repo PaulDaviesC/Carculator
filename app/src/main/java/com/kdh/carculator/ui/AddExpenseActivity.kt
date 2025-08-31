@@ -12,6 +12,7 @@ import com.kdh.carculator.repo.ExpenseCategoryRepository
 import com.kdh.carculator.util.Formatters
 import com.kdh.carculator.repo.SettingsRepository
 import kotlinx.coroutines.flow.collectLatest
+import java.math.BigDecimal
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.UUID
@@ -25,6 +26,7 @@ class AddExpenseActivity : BaseDrawerActivity() {
     private var categoryIds: List<String> = emptyList()
     private var selectedEpochMs: Long = System.currentTimeMillis()
     private var configuredCurrency: String = "INR"
+    private var editingExpenseId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,7 @@ class AddExpenseActivity : BaseDrawerActivity() {
 
         val carId = intent.getStringExtra("carId")
         if (carId == null) { finish(); return }
+        editingExpenseId = intent.getStringExtra("expenseId")
 
         lifecycleScope.launch {
             val s = settingsRepo.get()
@@ -52,6 +55,25 @@ class AddExpenseActivity : BaseDrawerActivity() {
                 adapter.clear()
                 adapter.addAll(list.map { it.name })
                 adapter.notifyDataSetChanged()
+
+                // If in edit mode, prefill once categories loaded so spinner can select
+                val id = editingExpenseId
+                if (id != null) {
+                    val existing = repo.getById(id)
+                    if (existing != null) {
+                        configuredCurrency = existing.currencyCode
+                        binding.tvCurrency.text = configuredCurrency
+                        selectedEpochMs = existing.occurredAtEpochMs
+                        updateSelectedDateLabel()
+                        binding.etAmountMinor.setText(BigDecimal(existing.amountMinor).divide(BigDecimal(100)).toPlainString())
+                        binding.etOdometerMeters.setText(existing.odometerAtMeters?.toString() ?: "")
+                        binding.etVendor.setText(existing.vendor ?: "")
+                        binding.etNotes.setText(existing.notes ?: "")
+                        val selIndex = categoryIds.indexOf(existing.categoryId)
+                        if (selIndex >= 0) binding.spCategory.setSelection(selIndex)
+                        binding.btnSave.setText(com.kdh.carculator.R.string.update)
+                    }
+                }
             }
         }
 
@@ -94,27 +116,54 @@ class AddExpenseActivity : BaseDrawerActivity() {
 
             val amountMinor = Formatters.majorToMinorCurrency(amountMajor)
             val now = System.currentTimeMillis()
-            val expense = Expense(
-                id = UUID.randomUUID().toString(),
-                carId = carId,
-                categoryId = categoryId,
-                amountMinor = amountMinor,
-                currencyCode = configuredCurrency,
-                occurredAtEpochMs = selectedEpochMs,
-                odometerAtMeters = odo,
-                vendor = vendor,
-                notes = notes,
-                attachmentUri = null,
-                createdAtEpochMs = now,
-                updatedAtEpochMs = now
-            )
+            val editingId = editingExpenseId
+            if (editingId == null) {
+                val expense = Expense(
+                    id = UUID.randomUUID().toString(),
+                    carId = carId,
+                    categoryId = categoryId,
+                    amountMinor = amountMinor,
+                    currencyCode = configuredCurrency,
+                    occurredAtEpochMs = selectedEpochMs,
+                    odometerAtMeters = odo,
+                    vendor = vendor,
+                    notes = notes,
+                    attachmentUri = null,
+                    createdAtEpochMs = now,
+                    updatedAtEpochMs = now
+                )
 
-            lifecycleScope.launch {
-                try {
-                    repo.add(expense)
-                    finish()
-                } catch (t: Throwable) {
-                    Toast.makeText(this@AddExpenseActivity, t.message ?: "Error", Toast.LENGTH_LONG).show()
+                lifecycleScope.launch {
+                    try {
+                        repo.add(expense)
+                        finish()
+                    } catch (t: Throwable) {
+                        Toast.makeText(this@AddExpenseActivity, t.message ?: "Error", Toast.LENGTH_LONG).show()
+                    }
+                }
+            } else {
+                lifecycleScope.launch {
+                    try {
+                        val existing = repo.getById(editingId)
+                        if (existing == null) {
+                            Toast.makeText(this@AddExpenseActivity, "Expense not found", Toast.LENGTH_LONG).show()
+                            return@launch
+                        }
+                        val updated = existing.copy(
+                            categoryId = categoryId,
+                            amountMinor = amountMinor,
+                            currencyCode = configuredCurrency,
+                            occurredAtEpochMs = selectedEpochMs,
+                            odometerAtMeters = odo,
+                            vendor = vendor,
+                            notes = notes,
+                            updatedAtEpochMs = now
+                        )
+                        repo.update(updated)
+                        finish()
+                    } catch (t: Throwable) {
+                        Toast.makeText(this@AddExpenseActivity, t.message ?: "Error", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }

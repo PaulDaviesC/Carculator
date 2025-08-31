@@ -20,6 +20,9 @@ interface ExpenseDao {
     @Delete
     suspend fun delete(expense: Expense)
 
+    @Query("SELECT * FROM expense WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): Expense?
+
     @Query("SELECT * FROM expense WHERE carId = :carId ORDER BY occurredAtEpochMs DESC")
     fun observeForCar(carId: String): Flow<List<Expense>>
 

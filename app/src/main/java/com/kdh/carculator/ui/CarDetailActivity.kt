@@ -112,6 +112,59 @@ class CarDetailActivity : BaseDrawerActivity() {
             }
         }
 
+        // Make Total Cost look interactive and show breakdown on tap
+        binding.tvSummaryTotalCost.paintFlags = binding.tvSummaryTotalCost.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        binding.tvSummaryTotalCost.setOnClickListener {
+            lifecycleScope.launch {
+                val settings = settingsRepo.get()
+                val currency = settings?.currencyCode ?: "INR"
+                val nf = NumberFormat.getCurrencyInstance(Locale.getDefault())
+                nf.currency = java.util.Currency.getInstance(currency)
+
+                val byCategory = expRepo.observeTotalsByCarCategory(carId).first()
+                val categories = categoryRepo.observeActive().first()
+                val idToName = categories.associate { it.id to it.name }
+
+                val inflater = LayoutInflater.from(this@CarDetailActivity)
+                val dialogView = inflater.inflate(R.layout.dialog_cpu_breakdown, null)
+                // Adjust header label for totals
+                dialogView.findViewById<TextView>(R.id.tvHeaderCost)?.text = "Total"
+                val rowsContainer = dialogView.findViewById<android.widget.LinearLayout>(R.id.rowsContainer)
+
+                byCategory
+                    .filter { it.currencyCode == currency }
+                    .sortedByDescending { it.totalAmountMinor }
+                    .forEach { row ->
+                        val itemRow = android.widget.LinearLayout(this@CarDetailActivity).apply {
+                            orientation = android.widget.LinearLayout.HORIZONTAL
+                            setPadding(8, 8, 8, 8)
+                        }
+                        val tvCat = TextView(this@CarDetailActivity).apply {
+                            layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
+                            val name = idToName[row.categoryId] ?: row.categoryId.substringAfter(":", row.categoryId)
+                            text = name
+                            setTextColor(Color.WHITE)
+                            setBackgroundResource(R.drawable.bg_badge)
+                            backgroundTintList = ColorStateList.valueOf(resolveCategoryColor(row.categoryId, name))
+                        }
+                        val tvTotal = TextView(this@CarDetailActivity).apply {
+                            layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                            text = nf.format(row.totalAmountMinor / 100.0)
+                            textAlignment = View.TEXT_ALIGNMENT_VIEW_END
+                        }
+                        itemRow.addView(tvCat)
+                        itemRow.addView(tvTotal)
+                        rowsContainer.addView(itemRow)
+                    }
+
+                AlertDialog.Builder(this@CarDetailActivity)
+                    .setTitle("Total cost by head")
+                    .setView(dialogView)
+                    .setPositiveButton("Close", null)
+                    .show()
+            }
+        }
+
         binding.tvSummaryCostPerUnit.paintFlags = binding.tvSummaryCostPerUnit.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.tvSummaryCostPerUnit.setOnClickListener {
             lifecycleScope.launch {
@@ -168,6 +221,15 @@ class CarDetailActivity : BaseDrawerActivity() {
         loadInitialExpenses()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refresh expenses after possible edits
+        reachedEnd = false
+        isLoading = false
+        expensesAdapter.submitList(emptyList())
+        loadInitialExpenses()
+    }
+
     fun resolveCategoryColor(categoryId: String, categoryName: String?): Int {
         val key = categoryId.substringAfter(":", categoryId).uppercase(Locale.getDefault())
         return when (key) {
@@ -180,6 +242,7 @@ class CarDetailActivity : BaseDrawerActivity() {
             "TOLLS" -> Color.parseColor("#283593")
             "DOWN_PAYMENT", "DOWNPAYMENT" -> Color.parseColor("#6A1B9A")
             "EMI" -> Color.parseColor("#4527A0")
+            "CLEANING" -> Color.parseColor("#00897B")
             else -> {
                 val palette = listOf("#455A64", "#5D4037", "#7B1FA2", "#00796B", "#1976D2", "#C2185B")
                 val idx = (categoryName?.hashCode() ?: key.hashCode()).let { Math.abs(it) % palette.size }
@@ -310,6 +373,17 @@ private class ItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         } else {
             tvViewNotes.visibility = View.GONE
             tvViewNotes.setOnClickListener(null)
+        }
+
+        // Tap to edit
+        itemView.setOnClickListener {
+            val ctx = itemView.context
+            if (ctx is CarDetailActivity) {
+                val i = Intent(ctx, AddExpenseActivity::class.java)
+                i.putExtra("carId", e.carId)
+                i.putExtra("expenseId", e.id)
+                ctx.startActivity(i)
+            }
         }
     }
 }

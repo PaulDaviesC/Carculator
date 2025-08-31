@@ -43,6 +43,8 @@ class ExpenseRepository(context: Context) {
     fun observeCostPerUnitByCarCategory(carId: String) = dao.observeCostPerUnitByCarCategory(carId)
 
     suspend fun add(expense: Expense) = dao.insert(expense)
+    suspend fun update(expense: Expense) = dao.update(expense)
+    suspend fun getById(id: String) = dao.getById(id)
 
     // Pagination
     suspend fun pageInitialByCar(carId: String, limit: Int): List<Expense> = dao.pageInitialByCar(carId, limit)

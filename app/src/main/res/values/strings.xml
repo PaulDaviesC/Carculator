@@ -8,6 +8,7 @@
     <string name="cancel">Cancel</string>
     <string name="add_odometer">Add Odometer</string>
     <string name="add_expense">Add Expense</string>
+    <string name="update">Update</string>
     <string name="km">KM</string>
     <string name="mile">Mile</string>
     <string name="currency">Currency</string>

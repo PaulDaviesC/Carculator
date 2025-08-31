@@ -1,6 +1,7 @@
 package com.kdh.carculator.ui
 
 import android.os.Bundle
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,15 @@ class ExpenseListActivity : AppCompatActivity() {
             }
         })
 
+        loadInitial()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh list after edits
+        reachedEnd = false
+        isLoading = false
+        adapter.submitList(emptyList())
         loadInitial()
     }
 
@@ -99,5 +109,14 @@ private class ExpenseVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(e: Expense) {
         t1.text = "${e.currencyCode} ${(e.amountMinor / 100.0)}"
         t2.text = e.notes ?: e.vendor ?: e.categoryId
+        itemView.setOnClickListener {
+            val ctx = itemView.context
+            if (ctx is ExpenseListActivity) {
+                val i = Intent(ctx, AddExpenseActivity::class.java)
+                i.putExtra("carId", e.carId)
+                i.putExtra("expenseId", e.id)
+                ctx.startActivity(i)
+            }
+        }
     }
 }

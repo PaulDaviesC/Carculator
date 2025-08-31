@@ -81,14 +81,18 @@ abstract class KdhDatabase : RoomDatabase() {
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_expense_car_category_time ON expense(carId, categoryId, occurredAtEpochMs DESC)")
 
             // Touch updatedAt trigger
+            // Re-create trigger defensively to avoid recursive updates
+            db.execSQL("DROP TRIGGER IF EXISTS expense_touch_updatedAt")
             db.execSQL(
                 """
                 CREATE TRIGGER IF NOT EXISTS expense_touch_updatedAt
                 AFTER UPDATE ON expense
-                FOR EACH ROW BEGIN
+                FOR EACH ROW
+                WHEN NEW.updatedAtEpochMs = OLD.updatedAtEpochMs
+                BEGIN
                   UPDATE expense
                      SET updatedAtEpochMs = CAST(strftime('%s','now') AS INTEGER) * 1000
-                   WHERE id = NEW.id;
+                   WHERE id = NEW.id AND updatedAtEpochMs = OLD.updatedAtEpochMs;
                 END;
                 """.trimIndent()
             )
@@ -205,7 +209,8 @@ abstract class KdhDatabase : RoomDatabase() {
                 "SYSTEM:TOLLS" to "Tolls",
                 "SYSTEM:DOWN_PAYMENT" to "Down payment",
                 "SYSTEM:EMI" to "EMI",
-                "SYSTEM:ACCESSORIES" to "Accessories"
+                "SYSTEM:ACCESSORIES" to "Accessories",
+                "SYSTEM:CLEANING" to "Cleaning"
             ).forEach { (id, name) ->
                 db.execSQL(
                     "INSERT OR IGNORE INTO expense_category (id, name, kind, isDeleted, sortOrder, createdAtEpochMs) VALUES (?, ?, 'SYSTEM', 0, ?, ?)",
