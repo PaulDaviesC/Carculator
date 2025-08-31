@@ -76,8 +76,8 @@ class AddCarActivity : BaseDrawerActivity() {
                 val unit = s?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
                 val initialOdoValue = binding.etInitialOdo.text?.toString()?.toDoubleOrNull()
                 val initialMeters = initialOdoValue?.let { Formatters.toMetersFromUnit(it, unit) }
-                val acqCostMajor = binding.etAcquisitionCost.text?.toString()?.toBigDecimalOrNull()
-                val acqCostMinor = acqCostMajor?.let { Formatters.majorToMinorCurrency(it) }
+                val downPaymentMajor = binding.etDownPayment.text?.toString()?.toBigDecimalOrNull()
+                val acqCostMinor = downPaymentMajor?.let { Formatters.majorToMinorCurrency(it) }
                 val remYears = binding.etRemainingYears.text?.toString()?.toIntOrNull() ?: 15
                 val remMonthsOnly = binding.etRemainingMonths.text?.toString()?.toIntOrNull() ?: 0
                 val remainingLifeMonths = remYears * 12 + remMonthsOnly

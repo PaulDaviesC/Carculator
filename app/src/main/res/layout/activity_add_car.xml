@@ -35,11 +35,11 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/etAcquisitionCost"
+        android:id="@+id/etDownPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:hint="Cost of acquisition"/>
+        android:hint="Down payment"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,6 +60,13 @@
             android:layout_height="wrap_content"
             android:text="Pick date"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvRemainingLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remaining age (years and months)"
+        android:layout_marginTop="8dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
