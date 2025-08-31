@@ -44,6 +44,7 @@ class ExpenseRepository(context: Context) {
 
     suspend fun add(expense: Expense) = dao.insert(expense)
     suspend fun update(expense: Expense) = dao.update(expense)
+    suspend fun delete(expense: Expense) = dao.delete(expense)
     suspend fun getById(id: String) = dao.getById(id)
     suspend fun listAllForCar(carId: String) = dao.listAllForCar(carId)
 

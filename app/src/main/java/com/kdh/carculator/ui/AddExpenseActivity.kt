@@ -72,6 +72,7 @@ class AddExpenseActivity : BaseDrawerActivity() {
                         val selIndex = categoryIds.indexOf(existing.categoryId)
                         if (selIndex >= 0) binding.spCategory.setSelection(selIndex)
                         binding.btnSave.setText(com.kdh.carculator.R.string.update)
+                        binding.btnDelete.visibility = android.view.View.VISIBLE
                     }
                 }
             }
@@ -100,6 +101,28 @@ class AddExpenseActivity : BaseDrawerActivity() {
         }
 
         binding.btnCancel.setOnClickListener { finish() }
+        binding.btnDelete.setOnClickListener {
+            val id = editingExpenseId
+            if (id == null) return@setOnClickListener
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(com.kdh.carculator.R.string.delete))
+                .setMessage(getString(com.kdh.carculator.R.string.confirm_delete))
+                .setPositiveButton(com.kdh.carculator.R.string.delete) { _, _ ->
+                    lifecycleScope.launch {
+                        try {
+                            val existing = repo.getById(id)
+                            if (existing != null) {
+                                repo.delete(existing)
+                            }
+                            finish()
+                        } catch (t: Throwable) {
+                            Toast.makeText(this@AddExpenseActivity, t.message ?: "Error", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+                .setNegativeButton(com.kdh.carculator.R.string.cancel, null)
+                .show()
+        }
         binding.btnSave.setOnClickListener {
             val amountMajorStr = binding.etAmountMinor.text?.toString()?.trim()
             val amountMajor = amountMajorStr?.toBigDecimalOrNull()
