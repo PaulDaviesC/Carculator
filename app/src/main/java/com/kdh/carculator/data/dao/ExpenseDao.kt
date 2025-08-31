@@ -64,6 +64,9 @@ interface ExpenseDao {
         LIMIT :limit
     """)
     suspend fun pageAfterByCar(carId: String, beforeTs: Long, beforeId: String, limit: Int): List<Expense>
+
+    @Query("SELECT * FROM expense WHERE carId = :carId ORDER BY occurredAtEpochMs ASC, id ASC")
+    suspend fun listAllForCar(carId: String): List<Expense>
 }
 
 // Lightweight DTOs for view rows

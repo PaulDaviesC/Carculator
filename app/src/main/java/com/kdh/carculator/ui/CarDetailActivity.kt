@@ -4,6 +4,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.net.Uri
+import android.view.Menu
+import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +46,12 @@ class CarDetailActivity : BaseDrawerActivity() {
     private lateinit var carId: String
     private var isLoading = false
     private var reachedEnd = false
+    private val pickCsv = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) handleImportCsv(uri)
+    }
+    private val createCsv = registerForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
+        if (uri != null) handleExportCsv(uri)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -221,6 +231,26 @@ class CarDetailActivity : BaseDrawerActivity() {
         loadInitialExpenses()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_car_detail, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_import_csv -> {
+                pickCsv.launch(arrayOf("text/*", "text/comma-separated-values", "text/csv", "application/csv"))
+                true
+            }
+            R.id.action_export_csv -> {
+                val defaultName = "expenses-$carId.csv"
+                createCsv.launch(defaultName)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         // Refresh expenses after possible edits
@@ -298,6 +328,92 @@ class CarDetailActivity : BaseDrawerActivity() {
                 if (next.size < 10) reachedEnd = true
             }
             isLoading = false
+        }
+    }
+
+    private fun handleImportCsv(uri: Uri) {
+        lifecycleScope.launch {
+            try {
+                val settings = settingsRepo.get()
+                val currency = settings?.currencyCode ?: "INR"
+                val allCategories = categoryRepo.observeActive().first()
+                val nameToCategory = allCategories.associateBy { it.name.trim().lowercase(Locale.getDefault()) }
+                contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                contentResolver.openInputStream(uri)?.use { input ->
+                    val rows = com.kdh.carculator.util.CsvUtils.readExpensesCsv(input)
+                    var imported = 0
+                    for (r in rows) {
+                        val head = r.head?.trim()
+                        val dateStr = r.dateDdMMyyyy?.trim()
+                        val amountStr = r.amount?.trim()
+                        if (head.isNullOrEmpty() || dateStr.isNullOrEmpty() || amountStr.isNullOrEmpty()) continue
+                        val category = nameToCategory[head.lowercase(Locale.getDefault())]
+                        val categoryId = category?.id ?: continue
+                        val occurred = com.kdh.carculator.util.CsvUtils.parseDdMMyyyyToEpochMs(dateStr) ?: continue
+                        val amountMajor = amountStr.replace(",", "").toBigDecimalOrNull() ?: continue
+                        val amountMinor = Formatters.majorToMinorCurrency(amountMajor)
+                        val odoMeters = r.odometer?.replace(",", "")?.toDoubleOrNull()?.let {
+                            val unit = settings?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
+                            Formatters.toMetersFromUnit(it, unit)
+                        }
+                        val expense = Expense(
+                            id = java.util.UUID.randomUUID().toString(),
+                            carId = carId,
+                            categoryId = categoryId,
+                            amountMinor = amountMinor,
+                            currencyCode = currency,
+                            occurredAtEpochMs = occurred,
+                            odometerAtMeters = odoMeters,
+                            vendor = r.vendor?.takeIf { it.isNotBlank() },
+                            notes = r.notes?.takeIf { it.isNotBlank() },
+                            attachmentUri = null,
+                            createdAtEpochMs = System.currentTimeMillis(),
+                            updatedAtEpochMs = System.currentTimeMillis()
+                        )
+                        expRepo.add(expense)
+                        imported++
+                    }
+                    android.widget.Toast.makeText(this@CarDetailActivity, "Imported $imported rows", android.widget.Toast.LENGTH_LONG).show()
+                    // refresh
+                    reachedEnd = false
+                    isLoading = false
+                    expensesAdapter.submitList(emptyList())
+                    loadInitialExpenses()
+                }
+            } catch (t: Throwable) {
+                android.widget.Toast.makeText(this@CarDetailActivity, t.message ?: "Import failed", android.widget.Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun handleExportCsv(uri: Uri) {
+        lifecycleScope.launch {
+            try {
+                val categories = categoryRepo.observeActive().first().associateBy { it.id }
+                val expenses = expRepo.listAllForCar(carId)
+                val settings = settingsRepo.get()
+                val unit = settings?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
+                val rows = expenses.map { e ->
+                    val head = categories[e.categoryId]?.name ?: e.categoryId.substringAfter(":", e.categoryId)
+                    com.kdh.carculator.util.CsvExpenseRow(
+                        head = head,
+                        dateDdMMyyyy = com.kdh.carculator.util.CsvUtils.formatEpochMsToDdMMyyyy(e.occurredAtEpochMs),
+                        amount = (e.amountMinor / 100.0).toString(),
+                        vendor = e.vendor,
+                        odometer = e.odometerAtMeters?.let { meters ->
+                            val km = if (unit == com.kdh.carculator.data.DistanceUnit.KM) meters / 1000.0 else meters / 1609.344
+                            String.format(Locale.getDefault(), "%.2f", km)
+                        },
+                        notes = e.notes
+                    )
+                }
+                contentResolver.openOutputStream(uri)?.use { out ->
+                    com.kdh.carculator.util.CsvUtils.writeExpensesCsv(rows, out)
+                }
+                android.widget.Toast.makeText(this@CarDetailActivity, "Exported ${rows.size} rows", android.widget.Toast.LENGTH_LONG).show()
+            } catch (t: Throwable) {
+                android.widget.Toast.makeText(this@CarDetailActivity, t.message ?: "Export failed", android.widget.Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

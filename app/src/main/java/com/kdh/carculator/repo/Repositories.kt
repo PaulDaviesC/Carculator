@@ -45,6 +45,7 @@ class ExpenseRepository(context: Context) {
     suspend fun add(expense: Expense) = dao.insert(expense)
     suspend fun update(expense: Expense) = dao.update(expense)
     suspend fun getById(id: String) = dao.getById(id)
+    suspend fun listAllForCar(carId: String) = dao.listAllForCar(carId)
 
     // Pagination
     suspend fun pageInitialByCar(carId: String, limit: Int): List<Expense> = dao.pageInitialByCar(carId, limit)
@@ -57,6 +58,8 @@ class ExpenseCategoryRepository(context: Context) {
     private val dao = db.expenseCategoryDao()
 
     fun observeActive(): Flow<List<ExpenseCategory>> = dao.observeActive()
+    suspend fun getActiveByName(name: String) = dao.getActiveByName(name)
+    suspend fun getByIds(ids: List<String>) = dao.getByIds(ids)
 }
 
 class SettingsRepository(context: Context) {

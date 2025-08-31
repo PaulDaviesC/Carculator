@@ -21,4 +21,10 @@ interface ExpenseCategoryDao {
 
     @Query("SELECT * FROM expense_category WHERE id = :id")
     suspend fun getById(id: String): ExpenseCategory?
+
+    @Query("SELECT * FROM expense_category WHERE isDeleted = 0 AND name = :name LIMIT 1")
+    suspend fun getActiveByName(name: String): ExpenseCategory?
+
+    @Query("SELECT * FROM expense_category WHERE id IN (:ids)")
+    suspend fun getByIds(ids: List<String>): List<ExpenseCategory>
 }
