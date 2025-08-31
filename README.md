@@ -1,4 +1,4 @@
-# KitnaDetiHai
+# Carculator
 
 Track your car’s running costs and efficiency in one lightweight Android app. Log odometer readings and expenses, then see totals and cost-per-unit breakdowns so you know how much it costs to run your car and what you’re getting per km/l (or mile/gal).
 
@@ -26,4 +26,4 @@ Track your car’s running costs and efficiency in one lightweight Android app. 
 3. Run the `app` module on a device/emulator (minSdk 26)
 
 ## Package
-- Application ID: `com.kdh.kitnadetihai`
+- Application ID: `com.kdh.carculator`

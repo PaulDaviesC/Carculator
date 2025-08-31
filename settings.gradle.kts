@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "KitnaDetiHai"
+rootProject.name = "Carculator"
 include(":app")

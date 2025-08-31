@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.kdh.kitnadetihai"
+    namespace = "com.kdh.carculator"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.kdh.kitnadetihai"
+        applicationId = "com.kdh.carculator"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
