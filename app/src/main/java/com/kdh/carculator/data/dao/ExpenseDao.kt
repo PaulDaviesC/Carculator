@@ -45,6 +45,9 @@ interface ExpenseDao {
     @Query("SELECT categoryId, currencyCode, unit, costPerUnitMinor FROM v_cost_per_unit_by_car_category WHERE carId = :carId")
     fun observeCostPerUnitByCarCategory(carId: String): Flow<List<CategoryCostPerUnitRow>>
 
+    @Query("SELECT carId, currencyCode, unit, costPerUnitMinor FROM v_cost_per_unit_by_car")
+    fun observeCostPerUnitForAllCars(): Flow<List<CarCostPerUnitAllRow>>
+
     // Keyset pagination: initial page and subsequent pages using (occurredAtEpochMs, id) as cursor
     @Query("""
         SELECT * FROM expense
@@ -82,6 +85,13 @@ data class CategoryTotalRow(
 )
 
 data class CarCostPerUnitRow(
+    val currencyCode: String,
+    val unit: String,
+    val costPerUnitMinor: Double
+)
+
+data class CarCostPerUnitAllRow(
+    val carId: String,
     val currencyCode: String,
     val unit: String,
     val costPerUnitMinor: Double

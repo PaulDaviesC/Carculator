@@ -42,6 +42,8 @@ class ExpenseRepository(context: Context) {
     fun observeCostPerUnitByCar(carId: String) = dao.observeCostPerUnitByCar(carId)
     fun observeCostPerUnitByCarCategory(carId: String) = dao.observeCostPerUnitByCarCategory(carId)
 
+    fun observeCostPerUnitForAllCars() = dao.observeCostPerUnitForAllCars()
+
     suspend fun add(expense: Expense) = dao.insert(expense)
     suspend fun update(expense: Expense) = dao.update(expense)
     suspend fun delete(expense: Expense) = dao.delete(expense)
