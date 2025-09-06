@@ -6,4 +6,5 @@
     android:padding="8dp"
     android:textStyle="bold"
     android:textColor="@android:color/white"
+    android:drawablePadding="8dp"
     android:background="#455A64"/>

@@ -41,7 +41,12 @@ class CarDetailActivity : BaseDrawerActivity() {
     private lateinit var settingsRepo: SettingsRepository
     private lateinit var categoryRepo: ExpenseCategoryRepository
 
-    private val expensesAdapter = CarExpensesAdapter()
+    private val expandedHeaders = mutableSetOf<String>()
+    private var allRows: List<ExpenseRow> = emptyList()
+    private val expensesAdapter = CarExpensesAdapter(
+        onHeaderClick = { title -> toggleHeader(title) },
+        isHeaderExpanded = { title -> expandedHeaders.contains(title) }
+    )
 
     private lateinit var carId: String
     private var isLoading = false
@@ -297,11 +302,47 @@ class CarDetailActivity : BaseDrawerActivity() {
         return result
     }
 
+    private fun computeVisibleRows(): List<ExpenseRow> {
+        if (allRows.isEmpty()) return emptyList()
+        val visible = mutableListOf<ExpenseRow>()
+        var currentHeader: String? = null
+        var isCurrentExpanded = false
+        for (row in allRows) {
+            when (row) {
+                is ExpenseRow.Header -> {
+                    currentHeader = row.title
+                    isCurrentExpanded = expandedHeaders.contains(row.title)
+                    visible.add(row)
+                }
+                is ExpenseRow.Item -> {
+                    if (isCurrentExpanded) visible.add(row)
+                }
+            }
+        }
+        return visible
+    }
+
+    private fun toggleHeader(title: String) {
+        if (expandedHeaders.contains(title)) {
+            expandedHeaders.remove(title)
+        } else {
+            expandedHeaders.add(title)
+        }
+        expensesAdapter.submitList(computeVisibleRows())
+        val idx = expensesAdapter.currentList.indexOfFirst { it is ExpenseRow.Header && it.title == title }
+        if (idx >= 0) {
+            expensesAdapter.notifyItemChanged(idx)
+        }
+    }
+
     private fun loadInitialExpenses() {
         isLoading = true
         lifecycleScope.launch {
             val page = expRepo.pageInitialByCar(carId, 10)
-            expensesAdapter.submitList(buildGrouped(page))
+            allRows = buildGrouped(page)
+            // Collapse all by default
+            expandedHeaders.clear()
+            expensesAdapter.submitList(computeVisibleRows())
             if (page.size < 10) reachedEnd = true
             isLoading = false
         }
@@ -317,14 +358,15 @@ class CarDetailActivity : BaseDrawerActivity() {
             if (next.isEmpty()) {
                 reachedEnd = true
             } else {
-                val merged = current.toMutableList()
                 val groupedNext = buildGrouped(next)
-                if (merged.isNotEmpty() && groupedNext.isNotEmpty() && merged.last() is ExpenseRow.Header && groupedNext.first() is ExpenseRow.Header && (merged.last() as ExpenseRow.Header).title == (groupedNext.first() as ExpenseRow.Header).title) {
-                    merged.addAll(groupedNext.drop(1))
+                val mergedAll = allRows.toMutableList()
+                if (mergedAll.isNotEmpty() && groupedNext.isNotEmpty() && mergedAll.last() is ExpenseRow.Header && groupedNext.first() is ExpenseRow.Header && (mergedAll.last() as ExpenseRow.Header).title == (groupedNext.first() as ExpenseRow.Header).title) {
+                    mergedAll.addAll(groupedNext.drop(1))
                 } else {
-                    merged.addAll(groupedNext)
+                    mergedAll.addAll(groupedNext)
                 }
-                expensesAdapter.submitList(merged)
+                allRows = mergedAll
+                expensesAdapter.submitList(computeVisibleRows())
                 if (next.size < 10) reachedEnd = true
             }
             isLoading = false
@@ -432,7 +474,10 @@ private object CarExpenseDiff : DiffUtil.ItemCallback<ExpenseRow>() {
     override fun areContentsTheSame(a: ExpenseRow, b: ExpenseRow): Boolean = a == b
 }
 
-private class CarExpensesAdapter : ListAdapter<ExpenseRow, RecyclerView.ViewHolder>(CarExpenseDiff) {
+private class CarExpensesAdapter(
+    private val onHeaderClick: (String) -> Unit,
+    private val isHeaderExpanded: (String) -> Boolean
+) : ListAdapter<ExpenseRow, RecyclerView.ViewHolder>(CarExpenseDiff) {
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is ExpenseRow.Header -> 0
         is ExpenseRow.Item -> 1
@@ -450,7 +495,7 @@ private class CarExpensesAdapter : ListAdapter<ExpenseRow, RecyclerView.ViewHold
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val row = getItem(position)) {
-            is ExpenseRow.Header -> (holder as HeaderVH).bind(row)
+            is ExpenseRow.Header -> (holder as HeaderVH).bind(row, isHeaderExpanded(row.title), onHeaderClick)
             is ExpenseRow.Item -> (holder as ItemVH).bind(row.expense)
         }
     }
@@ -458,7 +503,12 @@ private class CarExpensesAdapter : ListAdapter<ExpenseRow, RecyclerView.ViewHold
 
 private class HeaderVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val t1: TextView = itemView.findViewById(R.id.tvHeader)
-    fun bind(h: ExpenseRow.Header) { t1.text = h.title }
+    fun bind(h: ExpenseRow.Header, expanded: Boolean, onClick: (String) -> Unit) {
+        t1.text = h.title
+        val endIcon = if (expanded) android.R.drawable.arrow_up_float else android.R.drawable.arrow_down_float
+        t1.setCompoundDrawablesWithIntrinsicBounds(0, 0, endIcon, 0)
+        itemView.setOnClickListener { onClick(h.title) }
+    }
 }
 
 private class ItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
