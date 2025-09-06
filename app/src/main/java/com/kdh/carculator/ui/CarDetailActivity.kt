@@ -42,10 +42,16 @@ class CarDetailActivity : BaseDrawerActivity() {
     private lateinit var categoryRepo: ExpenseCategoryRepository
 
     private val expandedHeaders = mutableSetOf<String>()
+    private var headerTotalsMinor: Map<String, Long> = emptyMap()
+    private var displayCurrencyCode: String = "INR"
+    private var currencyFormatter: java.text.NumberFormat = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.getDefault()).apply {
+        currency = java.util.Currency.getInstance(displayCurrencyCode)
+    }
     private var allRows: List<ExpenseRow> = emptyList()
     private val expensesAdapter = CarExpensesAdapter(
         onHeaderClick = { title -> toggleHeader(title) },
-        isHeaderExpanded = { title -> expandedHeaders.contains(title) }
+        isHeaderExpanded = { title -> expandedHeaders.contains(title) },
+        getHeaderTotalText = { title -> headerTotalsMinor[title]?.let { currencyFormatter.format(it / 100.0) } }
     )
 
     private lateinit var carId: String
@@ -99,6 +105,8 @@ class CarDetailActivity : BaseDrawerActivity() {
             val s = settingsRepo.get()
             val unit = s?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
             val currency = s?.currencyCode ?: "INR"
+            displayCurrencyCode = currency
+            currencyFormatter.currency = java.util.Currency.getInstance(currency)
             val latest = odoRepo.latest(carId)
             binding.tvLatestOdo.text = latest?.let {
                 val dist = Formatters.formatDistance(it.readingMeters, unit)
@@ -302,6 +310,26 @@ class CarDetailActivity : BaseDrawerActivity() {
         return result
     }
 
+    private fun recomputeHeaderTotals() {
+        if (allRows.isEmpty()) {
+            headerTotalsMinor = emptyMap()
+            return
+        }
+        val totals = mutableMapOf<String, Long>()
+        var currentHeader: String? = null
+        for (row in allRows) {
+            when (row) {
+                is ExpenseRow.Header -> currentHeader = row.title
+                is ExpenseRow.Item -> {
+                    if (currentHeader != null) {
+                        totals[currentHeader!!] = (totals[currentHeader!!] ?: 0L) + row.expense.amountMinor
+                    }
+                }
+            }
+        }
+        headerTotalsMinor = totals
+    }
+
     private fun computeVisibleRows(): List<ExpenseRow> {
         if (allRows.isEmpty()) return emptyList()
         val visible = mutableListOf<ExpenseRow>()
@@ -342,6 +370,7 @@ class CarDetailActivity : BaseDrawerActivity() {
             allRows = buildGrouped(page)
             // Collapse all by default
             expandedHeaders.clear()
+            recomputeHeaderTotals()
             expensesAdapter.submitList(computeVisibleRows())
             if (page.size < 10) reachedEnd = true
             isLoading = false
@@ -366,6 +395,7 @@ class CarDetailActivity : BaseDrawerActivity() {
                     mergedAll.addAll(groupedNext)
                 }
                 allRows = mergedAll
+                recomputeHeaderTotals()
                 expensesAdapter.submitList(computeVisibleRows())
                 if (next.size < 10) reachedEnd = true
             }
@@ -476,7 +506,8 @@ private object CarExpenseDiff : DiffUtil.ItemCallback<ExpenseRow>() {
 
 private class CarExpensesAdapter(
     private val onHeaderClick: (String) -> Unit,
-    private val isHeaderExpanded: (String) -> Boolean
+    private val isHeaderExpanded: (String) -> Boolean,
+    private val getHeaderTotalText: (String) -> String?
 ) : ListAdapter<ExpenseRow, RecyclerView.ViewHolder>(CarExpenseDiff) {
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is ExpenseRow.Header -> 0
@@ -495,7 +526,7 @@ private class CarExpensesAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val row = getItem(position)) {
-            is ExpenseRow.Header -> (holder as HeaderVH).bind(row, isHeaderExpanded(row.title), onHeaderClick)
+            is ExpenseRow.Header -> (holder as HeaderVH).bind(row, isHeaderExpanded(row.title), getHeaderTotalText(row.title), onHeaderClick)
             is ExpenseRow.Item -> (holder as ItemVH).bind(row.expense)
         }
     }
@@ -503,8 +534,8 @@ private class CarExpensesAdapter(
 
 private class HeaderVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val t1: TextView = itemView.findViewById(R.id.tvHeader)
-    fun bind(h: ExpenseRow.Header, expanded: Boolean, onClick: (String) -> Unit) {
-        t1.text = h.title
+    fun bind(h: ExpenseRow.Header, expanded: Boolean, totalText: String?, onClick: (String) -> Unit) {
+        t1.text = if (totalText != null) "${h.title}  •  $totalText" else h.title
         val endIcon = if (expanded) android.R.drawable.arrow_up_float else android.R.drawable.arrow_down_float
         t1.setCompoundDrawablesWithIntrinsicBounds(0, 0, endIcon, 0)
         itemView.setOnClickListener { onClick(h.title) }
