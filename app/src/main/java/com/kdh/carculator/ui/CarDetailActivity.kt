@@ -398,6 +398,8 @@ class CarDetailActivity : BaseDrawerActivity() {
             expandedHeaders.clear()
             recomputeHeaderTotals()
             expensesAdapter.submitList(computeVisibleRows())
+            // If list cannot scroll (e.g., many collapsed groups), load more until it can or we reach end
+            maybeLoadMoreToFill()
             if (page.size < 10) reachedEnd = true
             isLoading = false
         }
@@ -414,17 +416,35 @@ class CarDetailActivity : BaseDrawerActivity() {
             } else {
                 val groupedNext = buildGrouped(next)
                 val mergedAll = allRows.toMutableList()
-                if (mergedAll.isNotEmpty() && groupedNext.isNotEmpty() && mergedAll.last() is ExpenseRow.Header && groupedNext.first() is ExpenseRow.Header && (mergedAll.last() as ExpenseRow.Header).title == (groupedNext.first() as ExpenseRow.Header).title) {
-                    mergedAll.addAll(groupedNext.drop(1))
-                } else {
-                    mergedAll.addAll(groupedNext)
+                // If the last existing header title equals the first header title of the next page, drop the duplicate header
+                val lastHeaderTitle = run {
+                    for (i in mergedAll.size - 1 downTo 0) {
+                        val r = mergedAll[i]
+                        if (r is ExpenseRow.Header) return@run r.title
+                    }
+                    null
                 }
+                val nextFirstHeaderTitle = (groupedNext.firstOrNull() as? ExpenseRow.Header)?.title
+                val toAppend = if (lastHeaderTitle != null && nextFirstHeaderTitle != null && lastHeaderTitle == nextFirstHeaderTitle) {
+                    groupedNext.drop(1)
+                } else groupedNext
+                mergedAll.addAll(toAppend)
                 allRows = mergedAll
                 recomputeHeaderTotals()
                 expensesAdapter.submitList(computeVisibleRows())
+                maybeLoadMoreToFill()
                 if (next.size < 10) reachedEnd = true
             }
             isLoading = false
+        }
+    }
+
+    private fun maybeLoadMoreToFill() {
+        // Post to run after layout; avoids measuring before adapter diff is applied
+        binding.recyclerExpenses.post {
+            if (!binding.recyclerExpenses.canScrollVertically(1) && !reachedEnd && !isLoading) {
+                loadMoreExpenses()
+            }
         }
     }
 
