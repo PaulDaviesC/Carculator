@@ -133,6 +133,32 @@ class CarDetailActivity : BaseDrawerActivity() {
                     binding.tvSummaryCostPerUnit.text = row?.let { nf.format(it.costPerUnitMinor / 100.0) + " / ${it.unit}" } ?: "—"
                 }
             }
+
+            // Accurate monthly totals regardless of paging
+            launch {
+                expRepo.observeMonthlyTotalsByCar(carId).collect { months ->
+                    val monthMap = months
+                        .filter { it.currencyCode == currency }
+                        .associate { row ->
+                            val parts = row.ym.split("-")
+                            val year = parts.getOrNull(0)?.toIntOrNull() ?: 0
+                            val monthIdx = (parts.getOrNull(1)?.toIntOrNull() ?: 1) - 1
+                            val cal = java.util.Calendar.getInstance().apply {
+                                set(java.util.Calendar.YEAR, year)
+                                set(java.util.Calendar.MONTH, monthIdx)
+                                set(java.util.Calendar.DAY_OF_MONTH, 1)
+                            }
+                            val title = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault()).format(cal.time)
+                            title to row.totalAmountMinor
+                        }
+                    headerTotalsMinor = monthMap
+                    // Refresh headers to show updated totals
+                    val currentList = expensesAdapter.currentList
+                    for ((idx, r) in currentList.withIndex()) {
+                        if (r is ExpenseRow.Header) expensesAdapter.notifyItemChanged(idx)
+                    }
+                }
+            }
         }
 
         // Make Total Cost look interactive and show breakdown on tap
@@ -378,8 +404,7 @@ class CarDetailActivity : BaseDrawerActivity() {
     }
 
     private fun loadMoreExpenses() {
-        val current = expensesAdapter.currentList
-        val lastExpense = current.asReversed().firstOrNull { it is ExpenseRow.Item } as? ExpenseRow.Item
+        val lastExpense = allRows.asReversed().firstOrNull { it is ExpenseRow.Item } as? ExpenseRow.Item
         if (lastExpense == null) { loadInitialExpenses(); return }
         isLoading = true
         lifecycleScope.launch {

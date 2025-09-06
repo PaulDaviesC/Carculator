@@ -54,6 +54,9 @@ class ExpenseRepository(context: Context) {
     suspend fun pageInitialByCar(carId: String, limit: Int): List<Expense> = dao.pageInitialByCar(carId, limit)
     suspend fun pageAfterByCar(carId: String, beforeTs: Long, beforeId: String, limit: Int): List<Expense> =
         dao.pageAfterByCar(carId, beforeTs, beforeId, limit)
+
+    // Monthly totals
+    fun observeMonthlyTotalsByCar(carId: String) = dao.observeMonthlyTotalsByCar(carId)
 }
 
 class ExpenseCategoryRepository(context: Context) {

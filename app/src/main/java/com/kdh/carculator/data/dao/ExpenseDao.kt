@@ -70,6 +70,20 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expense WHERE carId = :carId ORDER BY occurredAtEpochMs ASC, id ASC")
     suspend fun listAllForCar(carId: String): List<Expense>
+
+    // Monthly totals by car (ym = 'YYYY-MM')
+    @Query(
+        """
+        SELECT strftime('%Y-%m', datetime(occurredAtEpochMs/1000, 'unixepoch','localtime')) AS ym,
+               currencyCode AS currencyCode,
+               SUM(amountMinor) AS totalAmountMinor
+        FROM expense
+        WHERE carId = :carId
+        GROUP BY ym, currencyCode
+        ORDER BY ym DESC
+        """
+    )
+    fun observeMonthlyTotalsByCar(carId: String): Flow<List<MonthTotalRow>>
 }
 
 // Lightweight DTOs for view rows
@@ -102,4 +116,10 @@ data class CategoryCostPerUnitRow(
     val currencyCode: String,
     val unit: String,
     val costPerUnitMinor: Double
+)
+
+data class MonthTotalRow(
+    val ym: String, // format: YYYY-MM
+    val currencyCode: String,
+    val totalAmountMinor: Long
 )
