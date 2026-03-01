@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- On Android 12+, DynamicColors.applyToActivitiesIfAvailable() in App.kt
+         overrides these with the user's wallpaper-derived palette. -->
+    <style name="Theme.KDH" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <item name="android:navigationBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="textInputStyle">@style/Widget.KDH.TextInputLayout</item>
+        <item name="materialButtonStyle">@style/Widget.KDH.Button.Tonal</item>
+        <item name="floatingActionButtonStyle">@style/Widget.KDH.FAB</item>
+    </style>
+</resources>

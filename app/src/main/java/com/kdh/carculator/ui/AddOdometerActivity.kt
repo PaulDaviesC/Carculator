@@ -3,6 +3,7 @@ package com.kdh.carculator.ui
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.databinding.ActivityAddOdometerBinding
 import com.kdh.carculator.data.entity.OdometerLog
 import com.kdh.carculator.repo.OdometerRepository
@@ -17,6 +18,7 @@ class AddOdometerActivity : BaseDrawerActivity() {
     private lateinit var settingsRepo: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityAddOdometerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -29,15 +31,16 @@ class AddOdometerActivity : BaseDrawerActivity() {
         lifecycleScope.launch {
             val s = settingsRepo.get()
             val unit = s?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
-            binding.etReading.hint = "Odometer (${if (unit == com.kdh.carculator.data.DistanceUnit.KM) "KM" else "Mile"})"
+            binding.tilReading.hint = "Odometer (${if (unit == com.kdh.carculator.data.DistanceUnit.KM) "KM" else "Mile"})"
 
             binding.btnCancel.setOnClickListener { finish() }
             binding.btnSave.setOnClickListener {
                 val input = binding.etReading.text?.toString()?.toDoubleOrNull()
                 if (input == null) {
-                    Toast.makeText(this@AddOdometerActivity, "Enter a valid reading", Toast.LENGTH_SHORT).show()
+                    binding.tilReading.error = "Enter a valid reading"
                     return@setOnClickListener
                 }
+                binding.tilReading.error = null
                 val readingMeters = Formatters.toMetersFromUnit(input, unit)
                 val now = System.currentTimeMillis()
                 val log = OdometerLog(

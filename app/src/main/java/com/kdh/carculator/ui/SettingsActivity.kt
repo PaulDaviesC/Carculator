@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.data.DistanceUnit
 import com.kdh.carculator.data.entity.AppSettings
 import com.kdh.carculator.databinding.ActivitySettingsBinding
@@ -16,6 +17,7 @@ class SettingsActivity : BaseDrawerActivity() {
     private lateinit var repo: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)

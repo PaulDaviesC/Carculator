@@ -2,33 +2,48 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
+        <!-- Table header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#ECEFF1"
-            android:padding="8dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="?attr/colorSurfaceContainerHigh">
+
             <TextView
                 android:id="@+id/tvHeaderCategory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Category"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.KDH.Label"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+
             <TextView
                 android:id="@+id/tvHeaderCost"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cost / unit"
-                android:textStyle="bold"
-                android:gravity="end"/>
+                android:textAppearance="@style/TextAppearance.KDH.Label"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:gravity="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+
         </LinearLayout>
 
         <LinearLayout

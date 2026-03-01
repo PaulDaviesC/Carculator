@@ -3,37 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardUseCompatPadding="true"
-    app:cardCornerRadius="12dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@android:color/darker_gray">
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerLow">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
+        <!-- Top row: License plate chip + Car name -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvReg"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textStyle="bold"
-                android:textAppearance="@android:style/TextAppearance.Material.Medium"
-                android:textColor="@android:color/white"
-                android:background="@android:color/holo_blue_dark"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_marginEnd="8dp"
+                android:textAppearance="@style/TextAppearance.KDH.LicensePlate"
+                android:textColor="@color/license_plate_text"
+                android:background="@drawable/bg_license_plate"
                 android:maxLines="1"
                 android:ellipsize="end"/>
 
@@ -41,35 +41,40 @@
                 android:id="@+id/tvName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textAppearance="@android:style/TextAppearance.Material.Small"
-                android:textColor="@android:color/darker_gray"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.KDH.BodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:gravity="end"/>
+                android:gravity="end"
+                android:layout_marginStart="12dp"/>
+
         </LinearLayout>
 
+        <!-- Bottom row: Cost / Unit + Distance -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
 
             <TextView
                 android:id="@+id/tvCpuLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cost / Unit"
-                android:textAppearance="@android:style/TextAppearance.Material.Small"
-                android:textColor="@android:color/darker_gray"/>
+                android:textAppearance="@style/TextAppearance.KDH.LabelSmall"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipCpu"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+                style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                app:chipBackgroundColor="@android:color/holo_green_light"
+                app:chipBackgroundColor="?attr/colorSecondaryContainer"
+                android:textColor="?attr/colorOnSecondaryContainer"
                 app:chipStrokeWidth="0dp"
                 app:textStartPadding="12dp"
                 app:textEndPadding="12dp"
@@ -82,12 +87,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:textAppearance="@android:style/TextAppearance.Material.Small"
-                android:textColor="@android:color/darker_gray"/>
+                android:textAppearance="@style/TextAppearance.KDH.LabelSmall"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
+
         </LinearLayout>
 
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
-
-

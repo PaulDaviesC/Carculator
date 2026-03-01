@@ -1,123 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="12dp">
-
-    <TextView
-        android:id="@+id/tvHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:paddingBottom="8dp"/>
+    android:background="?attr/colorSurfaceContainerLowest">
 
     <LinearLayout
-        android:id="@+id/summaryRow"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:paddingBottom="8dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <!-- Car header -->
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
+            android:textAppearance="@style/TextAppearance.KDH.Title"
+            android:textColor="?attr/colorOnSurface"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <!-- Latest odometer as secondary status -->
+        <TextView
+            android:id="@+id/tvLatestOdo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.KDH.LabelSmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
+            android:drawablePadding="6dp"/>
+
+        <!-- Metric cards row -->
+        <LinearLayout
+            android:id="@+id/summaryRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="16dp"
+            android:baselineAligned="false">
+
+            <!-- Total Cost card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Total cost"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/tvSummaryTotalCost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                style="@style/Widget.KDH.Card.Metric"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total cost"
+                        android:textAppearance="@style/TextAppearance.KDH.MetricLabel"/>
+
+                    <TextView
+                        android:id="@+id/tvSummaryTotalCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.KDH.MetricValue"
+                        android:textColor="?attr/colorOnSurface"
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="12sp"
+                        android:autoSizeMaxTextSize="20sp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Mileage card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                style="@style/Widget.KDH.Card.Metric"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Mileage"
+                            android:textAppearance="@style/TextAppearance.KDH.MetricLabel"/>
+
+                        <ImageButton
+                            android:id="@+id/ibEditMileage"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="Edit mileage"
+                            app:srcCompat="@android:drawable/ic_menu_edit"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:scaleType="centerInside"/>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvSummaryMileage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.KDH.MetricValue"
+                        android:textColor="?attr/colorOnSurface"
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="12sp"
+                        android:autoSizeMaxTextSize="20sp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Cost / Unit card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                style="@style/Widget.KDH.Card.Metric"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cost / unit"
+                        android:textAppearance="@style/TextAppearance.KDH.MetricLabel"/>
+
+                    <TextView
+                        android:id="@+id/tvSummaryCostPerUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.KDH.MetricValue"
+                        android:textColor="?attr/colorOnSurface"
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="12sp"
+                        android:autoSizeMaxTextSize="20sp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <!-- Section label for expenses -->
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total mileage"
-                android:textStyle="bold"/>
+            android:text="Expenses"
+            android:textAppearance="@style/TextAppearance.KDH.Title"
+            android:textColor="?attr/colorOnSurface"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="88dp"
+                android:nestedScrollingEnabled="true"/>
+
+            <!-- Empty state for expenses -->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:id="@+id/emptyExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="48dp">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_empty_expenses"
+                    android:importantForAccessibility="no"/>
+
                 <TextView
-                    android:id="@+id/tvSummaryMileage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"/>
-                <ImageButton
-                    android:id="@+id/ibEditMileage"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:contentDescription="Edit mileage"
-                    app:srcCompat="@android:drawable/ic_menu_edit"
-                    app:tint="?attr/colorOnSurfaceVariant"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:layout_marginStart="4dp"/>
-            </LinearLayout>
-        </LinearLayout>
+                    android:layout_marginTop="16dp"
+                    android:text="No expenses recorded"
+                    android:textAppearance="@style/TextAppearance.KDH.Body"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:gravity="center"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cost / unit"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/tvSummaryCostPerUnit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Tap + to add your first expense"
+                    android:textAppearance="@style/TextAppearance.KDH.LabelSmall"
+                    android:textColor="?attr/colorOutline"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvLatestOdo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Expenses"
-        android:textStyle="bold"
-        android:paddingTop="8dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerExpenses"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:nestedScrollingEnabled="true"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddExpense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:contentDescription="@string/add_expense"
-        android:layout_gravity="end"
-        android:layout_margin="16dp"
-        app:srcCompat="@android:drawable/ic_input_add"/>
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:fabSize="auto"
+        app:fabCustomSize="64dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.KDH.FAB"/>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

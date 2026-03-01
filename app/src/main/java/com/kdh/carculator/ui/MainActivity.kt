@@ -2,25 +2,26 @@ package com.kdh.carculator.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.kdh.carculator.databinding.ActivityMainBinding
+import com.google.android.material.chip.Chip
+import com.google.android.material.color.DynamicColors
+import com.kdh.carculator.R
 import com.kdh.carculator.data.entity.Car
+import com.kdh.carculator.databinding.ActivityMainBinding
 import com.kdh.carculator.repo.CarRepository
 import com.kdh.carculator.repo.ExpenseRepository
 import com.kdh.carculator.repo.SettingsRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.view.View
-import android.widget.TextView
-import com.google.android.material.chip.Chip
 import java.text.NumberFormat
 import java.util.Locale
-import com.kdh.carculator.R
 
 class MainActivity : BaseDrawerActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -37,6 +38,7 @@ class MainActivity : BaseDrawerActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -58,6 +60,8 @@ class MainActivity : BaseDrawerActivity() {
             launch {
                 repo.observeCars().collectLatest { cars ->
                     adapter.submitList(cars)
+                    binding.emptyState.visibility = if (cars.isEmpty()) View.VISIBLE else View.GONE
+                    binding.recyclerCars.visibility = if (cars.isEmpty()) View.GONE else View.VISIBLE
                 }
             }
 

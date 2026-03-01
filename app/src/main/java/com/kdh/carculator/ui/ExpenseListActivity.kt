@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.databinding.ActivityExpenseListBinding
 import com.kdh.carculator.data.entity.Expense
 import com.kdh.carculator.repo.ExpenseRepository
@@ -27,6 +28,7 @@ class ExpenseListActivity : AppCompatActivity() {
     private var reachedEnd = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityExpenseListBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,15 +13,20 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
+            style="@style/Widget.KDH.Toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.Material3.ActionBar"/>
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorSurface"
+            android:elevation="0dp"
+            app:titleTextColor="?attr/colorOnSurface"
+            app:navigationIconTint="?attr/colorOnSurface"/>
 
         <FrameLayout
             android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:background="?attr/colorSurfaceContainerLowest"/>
 
     </LinearLayout>
 
@@ -29,6 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
         app:menu="@menu/menu_drawer"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

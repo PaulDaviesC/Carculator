@@ -11,12 +11,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.R
 import com.kdh.carculator.databinding.ActivityCarDetailBinding
 import com.kdh.carculator.repo.ExpenseRepository
@@ -65,6 +67,7 @@ class CarDetailActivity : BaseDrawerActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityCarDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -78,7 +81,6 @@ class CarDetailActivity : BaseDrawerActivity() {
         val lm = LinearLayoutManager(this)
         binding.recyclerExpenses.layoutManager = lm
         binding.recyclerExpenses.adapter = expensesAdapter
-        binding.recyclerExpenses.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(this, lm.orientation))
         binding.recyclerExpenses.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy <= 0) return
@@ -111,8 +113,8 @@ class CarDetailActivity : BaseDrawerActivity() {
             binding.tvLatestOdo.text = latest?.let {
                 val dist = Formatters.formatDistance(it.readingMeters, unit)
                 val ts = Formatters.formatDateTime(it.readingAtEpochMs)
-                "Latest: $dist at $ts"
-            } ?: "No odometer"
+                "Odometer: $dist  ·  $ts"
+            } ?: "No odometer readings"
 
             val totalsFlow = expRepo.observeTotalsByCar(carId)
             val cpuFlow = expRepo.observeCostPerUnitByCar(carId)
@@ -134,7 +136,6 @@ class CarDetailActivity : BaseDrawerActivity() {
                 }
             }
 
-            // Accurate monthly totals regardless of paging
             launch {
                 expRepo.observeMonthlyTotalsByCar(carId).collect { months ->
                     val monthMap = months
@@ -152,7 +153,6 @@ class CarDetailActivity : BaseDrawerActivity() {
                             title to row.totalAmountMinor
                         }
                     headerTotalsMinor = monthMap
-                    // Refresh headers to show updated totals
                     val currentList = expensesAdapter.currentList
                     for ((idx, r) in currentList.withIndex()) {
                         if (r is ExpenseRow.Header) expensesAdapter.notifyItemChanged(idx)
@@ -161,7 +161,6 @@ class CarDetailActivity : BaseDrawerActivity() {
             }
         }
 
-        // Make Total Cost look interactive and show breakdown on tap
         binding.tvSummaryTotalCost.paintFlags = binding.tvSummaryTotalCost.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.tvSummaryTotalCost.setOnClickListener {
             lifecycleScope.launch {
@@ -176,7 +175,6 @@ class CarDetailActivity : BaseDrawerActivity() {
 
                 val inflater = LayoutInflater.from(this@CarDetailActivity)
                 val dialogView = inflater.inflate(R.layout.dialog_cpu_breakdown, null)
-                // Adjust header label for totals
                 dialogView.findViewById<TextView>(R.id.tvHeaderCost)?.text = "Total"
                 val rowsContainer = dialogView.findViewById<android.widget.LinearLayout>(R.id.rowsContainer)
 
@@ -186,7 +184,7 @@ class CarDetailActivity : BaseDrawerActivity() {
                     .forEach { row ->
                         val itemRow = android.widget.LinearLayout(this@CarDetailActivity).apply {
                             orientation = android.widget.LinearLayout.HORIZONTAL
-                            setPadding(8, 8, 8, 8)
+                            setPadding(8, 12, 8, 12)
                         }
                         val tvCat = TextView(this@CarDetailActivity).apply {
                             layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
@@ -237,7 +235,7 @@ class CarDetailActivity : BaseDrawerActivity() {
                     .forEach { row ->
                         val itemRow = android.widget.LinearLayout(this@CarDetailActivity).apply {
                             orientation = android.widget.LinearLayout.HORIZONTAL
-                            setPadding(8, 8, 8, 8)
+                            setPadding(8, 12, 8, 12)
                         }
                         val tvCat = TextView(this@CarDetailActivity).apply {
                             layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
@@ -292,7 +290,6 @@ class CarDetailActivity : BaseDrawerActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh expenses after possible edits
         reachedEnd = false
         isLoading = false
         expensesAdapter.submitList(emptyList())
@@ -389,16 +386,21 @@ class CarDetailActivity : BaseDrawerActivity() {
         }
     }
 
+    private fun updateEmptyState() {
+        val hasExpenses = allRows.any { it is ExpenseRow.Item }
+        binding.emptyExpenses.visibility = if (hasExpenses) View.GONE else View.VISIBLE
+        binding.recyclerExpenses.visibility = if (hasExpenses) View.VISIBLE else View.GONE
+    }
+
     private fun loadInitialExpenses() {
         isLoading = true
         lifecycleScope.launch {
             val page = expRepo.pageInitialByCar(carId, 10)
             allRows = buildGrouped(page)
-            // Collapse all by default
             expandedHeaders.clear()
             recomputeHeaderTotals()
             expensesAdapter.submitList(computeVisibleRows())
-            // If list cannot scroll (e.g., many collapsed groups), load more until it can or we reach end
+            updateEmptyState()
             maybeLoadMoreToFill()
             if (page.size < 10) reachedEnd = true
             isLoading = false
@@ -416,7 +418,6 @@ class CarDetailActivity : BaseDrawerActivity() {
             } else {
                 val groupedNext = buildGrouped(next)
                 val mergedAll = allRows.toMutableList()
-                // If the last existing header title equals the first header title of the next page, drop the duplicate header
                 val lastHeaderTitle = run {
                     for (i in mergedAll.size - 1 downTo 0) {
                         val r = mergedAll[i]
@@ -432,6 +433,7 @@ class CarDetailActivity : BaseDrawerActivity() {
                 allRows = mergedAll
                 recomputeHeaderTotals()
                 expensesAdapter.submitList(computeVisibleRows())
+                updateEmptyState()
                 maybeLoadMoreToFill()
                 if (next.size < 10) reachedEnd = true
             }
@@ -440,7 +442,6 @@ class CarDetailActivity : BaseDrawerActivity() {
     }
 
     private fun maybeLoadMoreToFill() {
-        // Post to run after layout; avoids measuring before adapter diff is applied
         binding.recyclerExpenses.post {
             if (!binding.recyclerExpenses.canScrollVertically(1) && !reachedEnd && !isLoading) {
                 loadMoreExpenses()
@@ -491,7 +492,6 @@ class CarDetailActivity : BaseDrawerActivity() {
                         imported++
                     }
                     android.widget.Toast.makeText(this@CarDetailActivity, "Imported $imported rows", android.widget.Toast.LENGTH_LONG).show()
-                    // refresh
                     reachedEnd = false
                     isLoading = false
                     expensesAdapter.submitList(emptyList())
@@ -578,11 +578,22 @@ private class CarExpensesAdapter(
 }
 
 private class HeaderVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val t1: TextView = itemView.findViewById(R.id.tvHeader)
+    private val tvTitle: TextView = itemView.findViewById(R.id.tvHeaderTitle)
+    private val tvTotal: TextView = itemView.findViewById(R.id.tvHeaderTotal)
+    private val ivExpand: ImageView = itemView.findViewById(R.id.ivExpandIcon)
+
     fun bind(h: ExpenseRow.Header, expanded: Boolean, totalText: String?, onClick: (String) -> Unit) {
-        t1.text = if (totalText != null) "${h.title}  •  $totalText" else h.title
+        tvTitle.text = h.title
+        tvTotal.text = totalText ?: ""
+        tvTotal.visibility = if (totalText != null) View.VISIBLE else View.GONE
+
         val endIcon = if (expanded) android.R.drawable.arrow_up_float else android.R.drawable.arrow_down_float
-        t1.setCompoundDrawablesWithIntrinsicBounds(0, 0, endIcon, 0)
+        ivExpand.setImageResource(endIcon)
+        ivExpand.rotation = 0f
+        if (expanded) {
+            ivExpand.animate().rotation(180f).setDuration(200).start()
+        }
+
         itemView.setOnClickListener { onClick(h.title) }
     }
 }
@@ -593,6 +604,7 @@ private class ItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val tvDate: TextView = itemView.findViewById(R.id.tvDate)
     private val tvCategoryBadge: TextView = itemView.findViewById(R.id.tvCategoryBadge)
     private val tvViewNotes: TextView = itemView.findViewById(R.id.tvViewNotes)
+
     fun bind(e: Expense) {
         tvAmount.text = "${e.currencyCode} ${(e.amountMinor / 100.0)}"
         tvVendor.text = e.vendor ?: ""
@@ -617,7 +629,6 @@ private class ItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
             tvViewNotes.setOnClickListener(null)
         }
 
-        // Tap to edit
         itemView.setOnClickListener {
             val ctx = itemView.context
             if (ctx is CarDetailActivity) {

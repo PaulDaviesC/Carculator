@@ -6,12 +6,14 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.work.AmortizationWorker
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        DynamicColors.applyToActivitiesIfAvailable(this)
         val wm = WorkManager.getInstance(this)
         val periodic = PeriodicWorkRequestBuilder<AmortizationWorker>(24, TimeUnit.HOURS)
             .addTag(WORK_TAG)

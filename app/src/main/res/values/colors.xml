@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary palette: Deep teal / cyan-blue -->
+    <color name="md_seed">#006B5E</color>
+
+    <color name="md_primary">#006B5E</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#7AF8E2</color>
+    <color name="md_on_primary_container">#00201B</color>
+
+    <color name="md_secondary">#4A635D</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#CCE8E0</color>
+    <color name="md_on_secondary_container">#06201B</color>
+
+    <color name="md_tertiary">#436278</color>
+    <color name="md_on_tertiary">#FFFFFF</color>
+    <color name="md_tertiary_container">#C8E6FF</color>
+    <color name="md_on_tertiary_container">#001E30</color>
+
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+    <color name="md_error_container">#FFDAD6</color>
+    <color name="md_on_error_container">#410002</color>
+
+    <color name="md_background">#FAFDFB</color>
+    <color name="md_on_background">#191C1B</color>
+    <color name="md_surface">#FAFDFB</color>
+    <color name="md_on_surface">#191C1B</color>
+    <color name="md_surface_variant">#DAE5E1</color>
+    <color name="md_on_surface_variant">#3F4946</color>
+    <color name="md_outline">#6F7976</color>
+    <color name="md_outline_variant">#BEC9C5</color>
+
+    <color name="md_surface_container_lowest">#FFFFFF</color>
+    <color name="md_surface_container_low">#F4F7F5</color>
+    <color name="md_surface_container">#EEF1EF</color>
+    <color name="md_surface_container_high">#E8EBE9</color>
+    <color name="md_surface_container_highest">#E3E6E4</color>
+
+    <color name="md_inverse_surface">#2E3130</color>
+    <color name="md_inverse_on_surface">#EFF1EF</color>
+    <color name="md_inverse_primary">#5ADBC6</color>
+
+    <!-- Dark theme -->
+    <color name="md_primary_dark">#5ADBC6</color>
+    <color name="md_on_primary_dark">#003730</color>
+    <color name="md_primary_container_dark">#005047</color>
+    <color name="md_on_primary_container_dark">#7AF8E2</color>
+
+    <color name="md_secondary_dark">#B1CCC4</color>
+    <color name="md_on_secondary_dark">#1C3530</color>
+    <color name="md_secondary_container_dark">#334B46</color>
+    <color name="md_on_secondary_container_dark">#CCE8E0</color>
+
+    <color name="md_tertiary_dark">#ACCBE3</color>
+    <color name="md_on_tertiary_dark">#133347</color>
+    <color name="md_tertiary_container_dark">#2B4A5F</color>
+    <color name="md_on_tertiary_container_dark">#C8E6FF</color>
+
+    <color name="md_error_dark">#FFB4AB</color>
+    <color name="md_on_error_dark">#690005</color>
+    <color name="md_error_container_dark">#93000A</color>
+    <color name="md_on_error_container_dark">#FFDAD6</color>
+
+    <color name="md_background_dark">#191C1B</color>
+    <color name="md_on_background_dark">#E1E3E1</color>
+    <color name="md_surface_dark">#111413</color>
+    <color name="md_on_surface_dark">#C5C7C5</color>
+    <color name="md_surface_variant_dark">#3F4946</color>
+    <color name="md_on_surface_variant_dark">#BEC9C5</color>
+    <color name="md_outline_dark">#899390</color>
+    <color name="md_outline_variant_dark">#3F4946</color>
+
+    <color name="md_surface_container_lowest_dark">#0C0F0E</color>
+    <color name="md_surface_container_low_dark">#191C1B</color>
+    <color name="md_surface_container_dark">#1D201F</color>
+    <color name="md_surface_container_high_dark">#272B29</color>
+    <color name="md_surface_container_highest_dark">#323634</color>
+
+    <color name="md_inverse_surface_dark">#E1E3E1</color>
+    <color name="md_inverse_on_surface_dark">#2E3130</color>
+    <color name="md_inverse_primary_dark">#006B5E</color>
+
+    <!-- Category badge palette -->
+    <color name="badge_fuel">#2E7D32</color>
+    <color name="badge_insurance">#1565C0</color>
+    <color name="badge_service">#00695C</color>
+    <color name="badge_repair">#B71C1C</color>
+    <color name="badge_body_paint">#E65100</color>
+    <color name="badge_tax">#EF6C00</color>
+    <color name="badge_tolls">#283593</color>
+    <color name="badge_down_payment">#6A1B9A</color>
+    <color name="badge_emi">#4527A0</color>
+    <color name="badge_cleaning">#00897B</color>
+    <color name="badge_default">#455A64</color>
+
+    <!-- License plate chip -->
+    <color name="license_plate_bg">#1A237E</color>
+    <color name="license_plate_text">#FFFFFF</color>
+</resources>

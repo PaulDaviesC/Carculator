@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.databinding.ActivityAddExpenseBinding
 import com.kdh.carculator.data.entity.Expense
 import com.kdh.carculator.repo.ExpenseRepository
@@ -29,6 +30,7 @@ class AddExpenseActivity : BaseDrawerActivity() {
     private var editingExpenseId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -56,7 +58,6 @@ class AddExpenseActivity : BaseDrawerActivity() {
                 adapter.addAll(list.map { it.name })
                 adapter.notifyDataSetChanged()
 
-                // If in edit mode, prefill once categories loaded so spinner can select
                 val id = editingExpenseId
                 if (id != null) {
                     val existing = repo.getById(id)
@@ -133,9 +134,11 @@ class AddExpenseActivity : BaseDrawerActivity() {
             val notes = binding.etNotes.text?.toString()?.trim().takeIf { it?.isNotEmpty() == true }
 
             if (amountMajor == null || categoryId == null) {
+                if (amountMajor == null) binding.tilAmount.error = "Required"
                 Toast.makeText(this, "Fill amount and category", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            binding.tilAmount.error = null
 
             val amountMinor = Formatters.majorToMinorCurrency(amountMajor)
             val now = System.currentTimeMillis()

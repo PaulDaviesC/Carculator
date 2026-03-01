@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.databinding.ActivityAddCarBinding
 import com.kdh.carculator.data.entity.Car
 import com.kdh.carculator.repo.CarRepository
@@ -26,6 +27,7 @@ class AddCarActivity : BaseDrawerActivity() {
     private var configuredCurrency: String = "INR"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         binding = ActivityAddCarBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -37,7 +39,7 @@ class AddCarActivity : BaseDrawerActivity() {
             val s = settingsRepo.get()
             val unit = s?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
             configuredCurrency = s?.currencyCode ?: "INR"
-            binding.etInitialOdo.hint = "Initial odometer (${if (unit == com.kdh.carculator.data.DistanceUnit.KM) "KM" else "Mile"})"
+            binding.tilInitialOdo.hint = "Initial odometer (${if (unit == com.kdh.carculator.data.DistanceUnit.KM) "KM" else "Mile"})"
             binding.tvCurrency.text = configuredCurrency
             updateAcqDateLabel()
         }
@@ -69,9 +71,10 @@ class AddCarActivity : BaseDrawerActivity() {
                 val reg = binding.etRegistration.text?.toString()?.trim().orEmpty()
                 val name = binding.etName.text?.toString()?.trim().takeIf { it?.isNotEmpty() == true }
                 if (reg.isEmpty()) {
-                    Toast.makeText(this@AddCarActivity, "Registration is required", Toast.LENGTH_SHORT).show()
+                    binding.tilRegistration.error = "Registration is required"
                     return@launch
                 }
+                binding.tilRegistration.error = null
                 val s = settingsRepo.get()
                 val unit = s?.distanceUnit ?: com.kdh.carculator.data.DistanceUnit.KM
                 val initialOdoValue = binding.etInitialOdo.text?.toString()?.toDoubleOrNull()
@@ -118,6 +121,6 @@ class AddCarActivity : BaseDrawerActivity() {
     }
 
     private fun updateAcqDateLabel() {
-        binding.tvAcqDate.text = "Acquisition: " + com.kdh.carculator.util.Formatters.formatDateTime(acqDateEpochMs)
+        binding.tvAcqDate.text = "Acquisition: " + Formatters.formatDateTime(acqDateEpochMs)
     }
 }

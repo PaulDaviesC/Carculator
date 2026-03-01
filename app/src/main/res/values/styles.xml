@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Typography -->
+    <style name="TextAppearance.KDH.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.KDH.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.KDH.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.KDH.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.KDH.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.KDH.Label" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.KDH.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.KDH.LicensePlate" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="TextAppearance.KDH.MetricValue" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.KDH.MetricLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Components -->
+    <style name="Widget.KDH.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+    </style>
+
+    <style name="Widget.KDH.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="cornerRadius">20dp</item>
+    </style>
+
+    <style name="Widget.KDH.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">20dp</item>
+    </style>
+
+    <style name="Widget.KDH.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="cornerRadius">20dp</item>
+    </style>
+
+    <style name="Widget.KDH.FAB" parent="Widget.Material3.FloatingActionButton.Large.Primary">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.KDH.FAB</item>
+    </style>
+
+    <style name="ShapeAppearance.KDH.FAB" parent="">
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="Widget.KDH.Card.Elevated" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
+    <style name="Widget.KDH.Card.Outlined" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+    </style>
+
+    <style name="Widget.KDH.Chip.Badge" parent="Widget.Material3.Chip.Assist">
+        <item name="chipCornerRadius">8dp</item>
+        <item name="chipMinHeight">28dp</item>
+        <item name="chipStartPadding">8dp</item>
+        <item name="chipEndPadding">8dp</item>
+    </style>
+
+    <!-- Metric card used in car detail -->
+    <style name="Widget.KDH.Card.Metric" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerHigh</item>
+    </style>
+
+    <!-- Section header for expense groups -->
+    <style name="Widget.KDH.SectionHeader" parent="">
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:background">?attr/colorSurfaceContainerLow</item>
+    </style>
+
+    <style name="Widget.KDH.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.KDH.Title</item>
+    </style>
+
+</resources>

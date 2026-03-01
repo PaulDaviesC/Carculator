@@ -1,122 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <EditText
-        android:id="@+id/etRegistration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Registration number"/>
-
-    <EditText
-        android:id="@+id/etName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Car name (optional)"/>
+    android:background="?attr/colorSurfaceContainerLowest">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilRegistration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/registration_number"
+            app:startIconDrawable="@android:drawable/ic_menu_myplaces">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etRegistration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/car_name_optional">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/currency"
+                android:textAppearance="@style/TextAppearance.KDH.Label"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
+
+            <TextView
+                android:id="@+id/tvCurrency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textAppearance="@style/TextAppearance.KDH.Body"
+                android:textColor="?attr/colorOnSurface"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDownPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Down payment"
+            app:prefixText="₹">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDownPayment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Acquisition date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/tvAcqDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Acquisition date"
+                android:textAppearance="@style/TextAppearance.KDH.BodyMedium"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPickAcqDate"
+                style="@style/Widget.KDH.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick date"/>
+
+        </LinearLayout>
+
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvRemainingLabel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Currency:"/>
-        <TextView
-            android:id="@+id/tvCurrency"
-            android:layout_width="wrap_content"
+            android:text="Remaining age (years and months)"
+            android:textAppearance="@style/TextAppearance.KDH.Label"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginTop="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:baselineAligned="false">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Years"
+                app:suffixText="yr">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRemainingYears"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="15"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="Months"
+                app:suffixText="mo">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRemainingMonths"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="0"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilInitialOdo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Initial odometer (unit)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etInitialOdo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Action buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="32dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.KDH.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.KDH.Button.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:layout_marginStart="16dp"/>
+
+        </LinearLayout>
+
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/etDownPayment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:hint="Down payment"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginTop="8dp">
-        <TextView
-            android:id="@+id/tvAcqDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Acquisition date"
-            android:padding="8dp"/>
-        <Button
-            android:id="@+id/btnPickAcqDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pick date"/>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvRemainingLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Remaining age (years and months)"
-        android:layout_marginTop="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-        <EditText
-            android:id="@+id/etRemainingYears"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:text="15"
-            android:hint="Remaining years"/>
-        <EditText
-            android:id="@+id/etRemainingMonths"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:text="0"
-            android:hint="Remaining months"/>
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/etInitialOdo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:hint="Initial odometer (unit)"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel"/>
-
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:layout_marginStart="16dp"/>
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

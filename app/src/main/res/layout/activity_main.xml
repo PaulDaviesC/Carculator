@@ -2,30 +2,72 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLowest">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerCars"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="8dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="88dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-    </LinearLayout>
+        <!-- Empty state -->
+        <LinearLayout
+            android:id="@+id/emptyState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="48dp">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_empty_cars"
+                android:importantForAccessibility="no"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="No vehicles yet"
+                android:textAppearance="@style/TextAppearance.KDH.Headline"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tap + to add your first car"
+                android:textAppearance="@style/TextAppearance.KDH.BodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddCar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:contentDescription="@string/add_car"
         app:srcCompat="@android:drawable/ic_input_add"
-        android:layout_margin="16dp"
-        android:layout_gravity="bottom|end"/>
+        app:fabSize="auto"
+        app:fabCustomSize="64dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.KDH.FAB"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

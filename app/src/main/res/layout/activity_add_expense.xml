@@ -1,106 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLowest">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Currency:"/>
+                android:text="@string/currency"
+                android:textAppearance="@style/TextAppearance.KDH.Label"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
+
             <TextView
                 android:id="@+id/tvCurrency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="12dp"
+                android:textAppearance="@style/TextAppearance.KDH.Body"
+                android:textColor="?attr/colorOnSurface"/>
+
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etAmountMinor"
-            android:inputType="numberDecimal"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Amount"/>
+            android:layout_marginTop="16dp"
+            android:hint="@string/amount">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etAmountMinor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Date picker -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginTop="8dp">
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+
             <TextView
                 android:id="@+id/tvSelectedDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text=""
-                android:padding="8dp"/>
-            <Button
+                android:textAppearance="@style/TextAppearance.KDH.BodyMedium"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPickDate"
+                style="@style/Widget.KDH.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pick date"/>
+
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etOdometerMeters"
-            android:inputType="number"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilOdometer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Odometer (meters, optional)"/>
+            android:layout_marginTop="16dp"
+            android:hint="Odometer (meters, optional)">
 
-        <EditText
-            android:id="@+id/etVendor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/vendor"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOdometerMeters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
 
-        <EditText
-            android:id="@+id/etNotes"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilVendor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/notes"/>
+            android:layout_marginTop="16dp"
+            android:hint="@string/vendor">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etVendor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/notes">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="2"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category"
+            android:textAppearance="@style/TextAppearance.KDH.Label"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginTop="24dp"/>
 
         <Spinner
             android:id="@+id/spCategory"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:padding="12dp"/>
 
+        <!-- Action buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="32dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/delete"
+                android:textColor="?attr/colorError"
+                app:strokeColor="?attr/colorError"
+                app:cornerRadius="20dp"
                 android:visibility="gone"/>
 
-            <Button
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancel"
+                style="@style/Widget.KDH.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
+                style="@style/Widget.KDH.Button.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/save"
                 android:layout_marginStart="16dp"/>
+
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

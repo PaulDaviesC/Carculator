@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.google.android.material.color.DynamicColors
 import com.kdh.carculator.R
 import com.kdh.carculator.databinding.ActivityBaseDrawerBinding
 import com.kdh.carculator.repo.CarRepository
@@ -26,6 +27,8 @@ abstract class BaseDrawerActivity : AppCompatActivity() {
         super.setContentView(baseBinding.root)
         setSupportActionBar(baseBinding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.app_name)
+
         toggle = ActionBarDrawerToggle(this, baseBinding.drawerLayout, baseBinding.toolbar, R.string.app_name, R.string.app_name)
         toggle.isDrawerIndicatorEnabled = true
         baseBinding.drawerLayout.addDrawerListener(toggle)
