@@ -119,11 +119,12 @@ abstract class KdhDatabase : RoomDatabase() {
                   FROM odometer_log
                   GROUP BY carId
                 )
-                SELECT carId,
-                       startMeters,
-                       endMeters,
-                       MAX(endMeters - startMeters, 0) AS distanceMeters
-                FROM bounds
+                SELECT b.carId,
+                       b.startMeters,
+                       b.endMeters,
+                       MAX(b.endMeters - COALESCE(c.initialOdometerMeters, b.startMeters, 0), 0) AS distanceMeters
+                FROM bounds b
+                LEFT JOIN car c ON c.id = b.carId
                 """.trimIndent()
             )
 

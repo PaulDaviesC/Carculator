@@ -100,7 +100,7 @@ class AddCarActivity : BaseDrawerActivity() {
                 )
                 try {
                     repo.addCar(car)
-                    if (initialMeters != null && initialMeters > 0) {
+                    if (initialMeters != null) {
                         val baseLog = OdometerLog(
                             id = UUID.randomUUID().toString(),
                             carId = carId,

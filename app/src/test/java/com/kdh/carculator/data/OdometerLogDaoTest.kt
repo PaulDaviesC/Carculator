@@ -107,6 +107,17 @@ class OdometerLogDaoTest {
     }
 
     @Test
+    fun getTotalDistanceMeters_initialOdometerZero_returnsReadingValue() = runBlocking {
+        // Simulate a brand-new car with initial odometer = 0
+        db.odometerLogDao().insert(makeLog("log-init", 0, 1_700_000_000_000L))
+        // User later adds a reading of 50,000,000 meters (50,000 km)
+        db.odometerLogDao().insert(makeLog("log-1", 50_000_000, 1_700_000_001_000L))
+        // MAX(50,000,000) - MIN(0) = 50,000,000
+        val distance = db.odometerLogDao().getTotalDistanceMeters(carId)
+        assertThat(distance).isEqualTo(50_000_000)
+    }
+
+    @Test
     fun duplicate_carId_readingAtEpochMs_throws() = runBlocking {
         db.odometerLogDao().insert(makeLog("log-1", 1000, 1_700_000_000_000L))
         try {
