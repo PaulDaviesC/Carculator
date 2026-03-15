@@ -53,3 +53,7 @@ Repositories expose `Flow<>` for reactive UI updates. Activities collect flows w
 ### Testing
 
 Unit tests use Robolectric + in-memory Room database. Test assertions use Google Truth. Tests are in `app/src/test/`.
+
+## Documentation
+
+PRDs live in `docs/prd/`.
