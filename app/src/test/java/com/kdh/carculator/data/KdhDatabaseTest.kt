@@ -14,8 +14,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import java.util.UUID
 
+@RunWith(RobolectricTestRunner::class)
 class KdhDatabaseTest {
     private lateinit var context: Context
     private lateinit var db: KdhDatabase
@@ -27,12 +30,14 @@ class KdhDatabaseTest {
             .allowMainThreadQueries()
             .build()
         // Create views and seed defaults manually since in-memory builder won't call onCreate callback
+        val sdb = db.openHelper.writableDatabase
+        val companion = KdhDatabase::class.java.getDeclaredField("Companion").get(null)
         KdhDatabase.Companion::class.java.getDeclaredMethod("createViewsAndTriggers", androidx.sqlite.db.SupportSQLiteDatabase::class.java)
             .apply { isAccessible = true }
-            .invoke(null, db.openHelper.writableDatabase)
+            .invoke(companion, sdb)
         KdhDatabase.Companion::class.java.getDeclaredMethod("seedDefaults", androidx.sqlite.db.SupportSQLiteDatabase::class.java)
             .apply { isAccessible = true }
-            .invoke(null, db.openHelper.writableDatabase)
+            .invoke(companion, sdb)
     }
 
     @After
